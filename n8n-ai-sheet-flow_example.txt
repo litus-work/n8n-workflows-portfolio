@@ -1,0 +1,234 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "functionCode": "return [{ json: { summary: $json.choices[0].message.content } }];"
+      },
+      "name": "Format Output",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        600,
+        0
+      ],
+      "id": "29336f61-355f-4284-bac9-41897fcfcee9"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        0
+      ],
+      "id": "5927c601-ec97-47b4-aa59-a98d218f56df",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "15SNOG7-5ZbWRTQGtYFDDQ_ulaXs12byd2z3dYcV8yzE",
+          "mode": "list",
+          "cachedResultName": "Upwork_portfolio",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15SNOG7-5ZbWRTQGtYFDDQ_ulaXs12byd2z3dYcV8yzE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Лист1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15SNOG7-5ZbWRTQGtYFDDQ_ulaXs12byd2z3dYcV8yzE/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -20,
+        0
+      ],
+      "id": "cc58b355-1704-4849-a950-7ff43bea14da",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "LU1xpRqSowEtBbat",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "15SNOG7-5ZbWRTQGtYFDDQ_ulaXs12byd2z3dYcV8yzE",
+          "mode": "list",
+          "cachedResultName": "Upwork_portfolio",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15SNOG7-5ZbWRTQGtYFDDQ_ulaXs12byd2z3dYcV8yzE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Лист1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15SNOG7-5ZbWRTQGtYFDDQ_ulaXs12byd2z3dYcV8yzE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [
+            "Output"
+          ],
+          "schema": [
+            {
+              "id": "Input",
+              "displayName": "Input",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Output",
+              "displayName": "Output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        820,
+        0
+      ],
+      "id": "a311d631-beef-4919-b26d-f44691804f72",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "LU1xpRqSowEtBbat",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "=Hier ist ein Profil: {{ $json.Input }}\nBasierend auf diesen Informationen, schreibe eine kompakte, professionelle Beschreibung in einem vertrauensvollen B2B-Stil auf Deutsch. \nVerwende einen ruhigen Ton und konzentriere dich auf die Vorteile für das Unternehmen.",
+        "text": "",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "d58b1b42-99f7-4831-8633-99363a56f6cf",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        140,
+        200
+      ],
+      "id": "48f6e6a9-39e9-477e-8927-7bb0632c7669",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "dAYeRlYwk7f0BBSC",
+          "name": "Groq account 5"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Format Output": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Format Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4a5f758c8f9630703668d06d430991b9c6805ececc8b1949050c44f19f7c0eb9"
+  }
+}

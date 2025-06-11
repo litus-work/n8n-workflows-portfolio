@@ -1,0 +1,419 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1gjre4zRZw_3ViwQoSD9srER7id2npSaa7pTP1TnvgdE",
+          "mode": "list",
+          "cachedResultName": "Andrey_Emails",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gjre4zRZw_3ViwQoSD9srER7id2npSaa7pTP1TnvgdE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Лист1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gjre4zRZw_3ViwQoSD9srER7id2npSaa7pTP1TnvgdE/edit#gid=0"
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        0,
+        -320
+      ],
+      "id": "5c77f61a-f71a-488f-8e60-9f7c93b00e68",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OjHU6gvYuJ8p4pWU",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -440,
+        -480
+      ],
+      "id": "bc94e079-57e4-42c1-9834-af310a6f52bc",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = items; // Получаем строки из предыдущего узла (Google Sheets)\n\nconst firstUnsentRow = rows.find(row => !row.json[\"Статус отправки\"]); // Ищем строку, у которой статус отправки пустой\n\nif (firstUnsentRow) {\n  // Если строка найдена, возвращаем её\n  return [{ json: firstUnsentRow.json }];\n} else {\n  // Если строк нет с пустым статусом, возвращаем пустой результат\n  return [];\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        180,
+        -320
+      ],
+      "id": "945930bf-6c01-484d-8095-6e4b2cf0df64",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.Promt }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        580,
+        -320
+      ],
+      "id": "1d0661c3-78e8-42f2-956a-1bdddbd365fb",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "deepseek-r1-distill-llama-70b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        420,
+        -100
+      ],
+      "id": "8b1a10d4-68b8-4d77-a5e1-054ab4e5846f",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "r2m59g4ChYMc0tCq",
+          "name": "Groq account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -40,
+        120
+      ],
+      "id": "9fcfd0d2-a224-41b4-b2ed-c33f1b77ae16",
+      "name": "Gmail Trigger"
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.snippet }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Клиенты",
+              "description": "  When a customer answers, for example: Yes, I am interested in a test call at 18:00 Moscow time on my number 890345345 and expresses willingness to call, the AI-agent should either he specify his social networks such as WhatsApp or Instagram"
+            }
+          ]
+        },
+        "options": {
+          "systemPromptTemplate": "Please classify the text provided by the user into one of the following categories: {categories}, and use the provided formatting instructions below. Don't explain, and only output the json."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        140,
+        120
+      ],
+      "id": "164d1118-d3d4-440c-af1b-2ee6342cc310",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        140,
+        360
+      ],
+      "id": "95cc34e4-6d34-4b13-9863-3f6ee62e3e99",
+      "name": "Groq Chat Model1"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_3867184531164875745"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        520,
+        120
+      ],
+      "id": "e540a20b-c7cc-4eb2-bc62-45ba8da3a3e0",
+      "name": "Gmail1",
+      "webhookId": "5e198dbc-5e25-4546-9011-2ea1fc5216ec"
+    },
+    {
+      "parameters": {
+        "chatId": "92500579",
+        "text": "={{ $json.id }}\n{{ $('Text Classifier').item.json.snippet }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        740,
+        120
+      ],
+      "id": "d96dd1b0-ab9c-4df2-a8fa-c84cd561f5c3",
+      "name": "Telegram",
+      "webhookId": "7dbe13d4-1ac5-42c5-b6e4-ed5da79c8819"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1HyJARl6Kzfz_hmEEF1WUKSpIcNVBuIsDQqLxD6mS3Ac",
+          "mode": "list",
+          "cachedResultName": "Лиды после генерации",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HyJARl6Kzfz_hmEEF1WUKSpIcNVBuIsDQqLxD6mS3Ac/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Лист1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HyJARl6Kzfz_hmEEF1WUKSpIcNVBuIsDQqLxD6mS3Ac/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $('Code').item.json.email }}",
+            "статус отправки": "=Отправлено {{ $now }}"
+          },
+          "matchingColumns": [
+            "email"
+          ],
+          "schema": [
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "статус отправки",
+              "displayName": "статус отправки",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1060,
+        -320
+      ],
+      "id": "0238557e-18bc-4de0-bc00-c86ce257fc34",
+      "name": "Google Sheets1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1gjre4zRZw_3ViwQoSD9srER7id2npSaa7pTP1TnvgdE",
+          "mode": "list",
+          "cachedResultName": "Andrey_Emails",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gjre4zRZw_3ViwQoSD9srER7id2npSaa7pTP1TnvgdE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 738124430,
+          "mode": "list",
+          "cachedResultName": "Лист2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gjre4zRZw_3ViwQoSD9srER7id2npSaa7pTP1TnvgdE/edit#gid=738124430"
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        380,
+        -320
+      ],
+      "id": "52997d74-9f70-4cb2-a6db-095712c22b45",
+      "name": "Google Sheets2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OjHU6gvYuJ8p4pWU",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail1": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "4a5f758c8f9630703668d06d430991b9c6805ececc8b1949050c44f19f7c0eb9"
+  }
+}
