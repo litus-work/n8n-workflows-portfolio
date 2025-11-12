@@ -6,7 +6,7 @@ This repository contains a collection of advanced and practical n8n workflow aut
 ### [AI Mail Sender (Cold Outreach Automation)](./ai-mail-sender)
 This workflow generates and sends personalized cold emails based on customer profiles. It uses AI to tailor content and Google Sheets to store results. Ideal for soft B2B consulting outreach.
 
-### [Telegram Dialog Extractor](./telegram-dialogs-extractor)
+### [Telegram Dialog Extractor](https://github.com/litus-work/n8n-Telegram-Dialogs-Extractor)
 Parses exported Telegram chat history (ZIP with messages.html and voice files). Extracts messages, voice transcriptions, sorts and formats the conversation into clean JSON for later use.
 
 ### [Google Maps Email Scraper](./maps-emails-scraper)
